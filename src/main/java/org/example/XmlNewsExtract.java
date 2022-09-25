@@ -15,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -34,7 +35,9 @@ public class XmlNewsExtract {
 
     private int poisonPills;
 
-    XmlNewsExtract(BlockingQueue<Optional<NewsDto>> queue, int numberOfPills) throws ParserConfigurationException {
+    private ForkJoinTask<?> currentTask;
+
+    public XmlNewsExtract(BlockingQueue<Optional<NewsDto>> queue, int numberOfPills) throws ParserConfigurationException {
         newsQueue = queue;
         documentBuilderFactory = new ArrayList<>();
         documentBuilders = new HashMap<>();
@@ -57,6 +60,10 @@ public class XmlNewsExtract {
         customThreadPool.shutdownNow();
     }
 
+    public void waitOnCurrentTask() {
+        currentTask.join();
+    }
+
     public void startNewsStreamFromFolder(String folder) throws IOException {
         var path = Paths.get(folder);
         if(!Files.isDirectory(path)) {
@@ -64,9 +71,9 @@ public class XmlNewsExtract {
             return;
         }
         Stream<Path> paths = Files.walk(path);
-        customThreadPool.submit(() -> {
+        currentTask = customThreadPool.submit(() -> {
 
-           paths.unordered().parallel().takeWhile(p -> stopCondition.get() == false)
+           paths.skip(1).unordered().parallel().takeWhile(p -> stopCondition.get() == false)
                    .forEach(p -> {
                        try {
                            var result = getNewsBlock(p.toString());
