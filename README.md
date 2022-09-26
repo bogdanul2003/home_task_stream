@@ -1,9 +1,11 @@
 # How to build & run
 The app should be compiled and run with java 17 and expects two parameters as input
+
 Usage: app [companies_file] [news_folder]
 
 At the end of the run it will output the number of companies found and how long it took. To get a better average you'll have to run it a few times.
-# Parallel found 5096 companies in 9071 ms
+
+"Parallel found 5096 companies in 9071 ms"
 
 # Architecture
 The app consists of two custom ForkJoin thread pool and a BlockingQueue which is used to communicate between the two pools.
