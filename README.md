@@ -9,6 +9,9 @@ At the end of the run it will output the number of companies found and how long 
 
 # Architecture
 The app consists of two custom ForkJoin thread pool and a BlockingQueue which is used to communicate between the two pools.
+
 XmlFilesProcessor uses a smaller thread pool to read news files in parallel as fast as possible and submits news to the BlockingQueue.
+
 NewsProcessor uses a thread pool with number of cpus + 1 workers and waits for news from BlockingQueue. It basically does a map/reduce operation on the news.
+
 Information about the companies is stored in Trie data structure that allows a fast lookup.
