@@ -31,7 +31,7 @@ public class ThreadPoolUsageMeter {
             return prev + e.getValue().get();
         }, (a, b) -> a + b);
 
-        System.out.println("Total for " + threadPrefix + " is: " + total);
+        System.out.println("Total for " + threadPrefix + " is: ms" + total);
     }
 
 }
