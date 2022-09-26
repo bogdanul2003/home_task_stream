@@ -146,7 +146,7 @@ public class CompaniesHash implements CompaniesHashInterface {
         if (root.getCurrentString() != null) {
             if (foundOnly) {
                 root.getFoundCompany().ifPresent(f -> {
-                    if(f) {
+                    if(f == true) {
                         consume.accept(root);
                     }
                 });

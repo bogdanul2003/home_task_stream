@@ -7,6 +7,8 @@ At the end of the run it will output the number of companies found and how long 
 
 "Parallel found 5096 companies in 9071 ms"
 
+There is also an output file in the same folder as the [companies_file] that contains all found companies (it appends "out" to the input file name).
+
 # Architecture
 The app consists of two custom ForkJoin thread pool and a BlockingQueue which is used to communicate between the two pools.
 

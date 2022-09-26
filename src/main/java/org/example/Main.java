@@ -21,7 +21,7 @@ public class Main {
         Set<Integer> result = controller.processNews(args[1]);
         System.out.println("Parallel found " + result.size() + " companies in " + controller.getLastDuration());
 
-        OutputWriter.printContentToFile(args[0], hash.getStoredCompanies(false));
+        OutputWriter.printContentToFile(args[0], hash.getStoredCompanies(true));
     }
 
 }
