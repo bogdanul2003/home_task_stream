@@ -1,41 +1,27 @@
 package org.example;
 
+import org.example.storage.CompaniesHash;
+import org.example.writer.OutputWriter;
+
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Optional;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.Set;
 
 public class Main {
-    public static void main(String[] args) throws ParserConfigurationException, IOException, URISyntaxException {
-        if(args.length != 2)
-        {
+    public static void main(String[] args) throws ParserConfigurationException, IOException {
+        if (args.length != 2) {
             System.out.println("Usage: app [companies_file] [news_folder]");
             return;
         }
 
         CompaniesHash hash = new CompaniesHash();
-        hash.insertCompanies(args[0]);
+        hash.loadCompanies(args[0]);
 
-        BlockingQueue<Optional<NewsDto>> queue = new LinkedBlockingDeque<>(ForkJoinPool.commonPool().getParallelism() * 4);
+        CompaniesProcessorController controller = new CompaniesProcessorController(hash);
+        Set<Integer> result = controller.processNews(args[1]);
+        System.out.println("Parallel found " + result.size() + " companies in " + controller.getLastDuration());
 
-        NewsProcessor processor = new NewsProcessor(queue, hash, false);
-        XmlNewsExtract news = new XmlNewsExtract(queue, processor.getNumberOfThreads());
-
-        System.out.println("Starting news feed reader");
-        news.startNewsStreamFromFolder(args[1]);
-        System.out.println("Starting news feed processing");
-
-        long startTime = System.nanoTime();
-        var result = processor.startNewsProcessing();
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-
-        System.out.println("Parallel found " + result.size() + " companies in " + duration/1000000);
-
-        hash.printContentToFile();
-//        System.out.println("Found " + hash.getFoundCompanies().size() + " companies in " + duration/1000000);
+        OutputWriter.printContentToFile(args[0], hash.getStoredCompanies(false));
     }
+
 }

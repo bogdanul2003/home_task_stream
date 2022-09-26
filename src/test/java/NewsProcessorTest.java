@@ -1,6 +1,6 @@
-import org.example.CompaniesHash;
-import org.example.NewsDto;
-import org.example.NewsProcessor;
+import org.example.storage.CompaniesHash;
+import org.example.model.NewsDto;
+import org.example.processor.NewsProcessor;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-import org.example.CompaniesHash;
+import org.example.storage.CompaniesHash;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +60,9 @@ public class CompaniesHashTest {
         var id = hashTest.getCompanyId("thread");
         Assert.assertEquals(id.get(), expectedIds.get(index));
 
-        Assert.assertArrayEquals(hashTest.getFoundCompanies().toArray(), Arrays.asList(id.get()).toArray());
+        //Assert.assertArrayEquals(hashTest.getFoundCompanies().toArray(), Arrays.asList(id.get()).toArray());
+        var result = hashTest.getStoredCompanies(true).stream().findFirst();
+        Assert.assertEquals(result.get().getCompanyIds().stream().findFirst(), id);
     }
 
     @Test

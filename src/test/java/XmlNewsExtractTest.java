@@ -1,5 +1,5 @@
-import org.example.NewsDto;
-import org.example.XmlNewsExtract;
+import org.example.model.NewsDto;
+import org.example.processor.XmlFilesProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,9 +27,9 @@ public class XmlNewsExtractTest {
     }
 
     @Test
-    public void testWithPills() throws ParserConfigurationException, URISyntaxException, IOException, InterruptedException {
+    public void testWithPills() throws IOException, InterruptedException {
         when(queue.offer(any(), any(Long.class), any())).thenReturn(true);
-        XmlNewsExtract xmlNewsExtract = new XmlNewsExtract(queue, 3);
+        XmlFilesProcessor xmlNewsExtract = new XmlFilesProcessor(queue, 3);
 
         URL resource = getClass().getClassLoader().getResource("testNews");
         xmlNewsExtract.startNewsStreamFromFolder(resource.getFile());
