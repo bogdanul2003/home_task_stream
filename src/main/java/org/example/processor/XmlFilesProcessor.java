@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 public class XmlFilesProcessor {
-    private static final Integer parallelStreams = 4;
+    private static final Integer parallelStreams = 6;
     public static final String MY_NEWS_EXTRACTOR = "my-news-extractor-";
     final private List<DocumentBuilderFactory> documentBuilderFactory;
     final private Map<String, DocumentBuilder> documentBuilders;
@@ -70,22 +70,22 @@ public class XmlFilesProcessor {
     }
 
     public void startNewsStreamFromFolder(String folder) throws IOException {
-        var folderPath = Paths.get(folder);
+        Path folderPath = Paths.get(folder);
         if (!Files.isDirectory(folderPath)) {
             System.out.println("Not a valid folder!");
             return;
         }
 
         Stream<Path> paths = Files.walk(folderPath);
-        currentTask = customThreadPool.submit(() -> processNewsFiles(paths));
+        currentTask = customThreadPool.submit(() -> processNewsFiles(paths, folderPath));
     }
 
-    private void processNewsFiles(Stream<Path> paths) {
+    private void processNewsFiles(Stream<Path> paths, Path folderPath) {
 
-        paths.skip(1).unordered()
+        paths.unordered()
                 .parallel()
                 .takeWhile(p -> !stopCondition.get())
-                .forEach(this::processNewsFile);
+                .forEach(filePath -> processNewsFile(filePath, folderPath));
 
         System.out.println("##############################################################################");
         usageMeter.printUsage();
@@ -93,7 +93,11 @@ public class XmlFilesProcessor {
         sendPoisonPills();
     }
 
-    private void processNewsFile(Path filePath) {
+    private void processNewsFile(Path filePath, Path folderPath) {
+        if(filePath.equals(folderPath)){
+            return;
+        }
+
         try {
             var result = NewsParser.extractNews(filePath.toString(), documentBuilders.get(Thread.currentThread().getName()));
             usageMeter.monitorUsage();

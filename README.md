@@ -5,12 +5,12 @@ Usage: app [companies_file] [news_folder]
 
 At the end of the run it will output the number of companies found and how long it took. To get a better average you'll have to run it a few times.
 
-"Parallel found 5096 companies in 9071 ms"
+"Parallel found 5096 companies in 7223"
 
 There is also an output file in the same folder as the [companies_file] that contains all found companies (it appends "out" to the input file name).
 
 # Architecture
-The app consists of two custom ForkJoin thread pool and a BlockingQueue which is used to communicate between the two pools.
+The app consists of two custom ForkJoin thread pools and a BlockingQueue which is used to communicate between the two pools.
 
 XmlFilesProcessor uses a smaller thread pool to read news files in parallel as fast as possible and submits news to the BlockingQueue.
 
